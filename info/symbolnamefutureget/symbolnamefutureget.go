@@ -29,7 +29,7 @@ func (clt *clientImpl) SymbolNameFutureGet(futureCode FutureCode, year, month in
 		NK225micro: "NK225micro",
 	}
 	futureCodeStr := futureCodeMap[futureCode]
-	yearMonth := time.Date(year, time.Month(month), 1, 0, 0, 0, 0, nil)
+	yearMonth := time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.Local)
 	derivMonth := yearMonth.Format("200601")
 	return clt.baseClient.Get("/symbolname/future", map[string]string{"FutureCode": futureCodeStr, "DerivMonth": derivMonth})
 }

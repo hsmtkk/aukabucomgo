@@ -46,7 +46,7 @@ func (clt *clientImpl) SymbolNameOptionGet(optionCode OptionCode, year, month in
 		NK225miniop: "NK225miniop",
 	}
 	optionCodeStr := optionCodeMap[optionCode]
-	yearMonth := time.Date(year, time.Month(month), 1, 0, 0, 0, 0, nil)
+	yearMonth := time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.Local)
 	derivMonth := yearMonth.Format("200601")
 	putOrCallMap := map[PutOrCall]string{
 		PUT:  "P",
