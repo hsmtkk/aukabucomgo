@@ -50,7 +50,7 @@ func (clt *clientImpl) SymbolNameOptionGet(optionCode OptionCode, derivMonth int
 		CALL: "C",
 	}
 	putOrCallStr := putOrCallMap[putOrCall]
-	respBytes, err := clt.baseClient.Get("/symbolname/future", map[string]string{"OptionCode": optionCodeStr, "DerivMonth": strconv.Itoa(derivMonth), "PutOrCall": putOrCallStr, "StrikePrice": strconv.Itoa(strikePrice)})
+	respBytes, err := clt.baseClient.Get("/symbolname/option", map[string]string{"OptionCode": optionCodeStr, "DerivMonth": strconv.Itoa(derivMonth), "PutOrCall": putOrCallStr, "StrikePrice": strconv.Itoa(strikePrice)})
 	if err != nil {
 		return ResponseSchema{}, err
 	}
