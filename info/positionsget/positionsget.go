@@ -1,11 +1,14 @@
 package positionsget
 
 import (
+	"encoding/json"
+	"fmt"
+
 	"github.com/hsmtkk/aukabucomgo/base"
 )
 
 type Client interface {
-	PositionsGet(product Product, side Side) ([]byte, error)
+	PositionsGet(product Product, side Side) (ResponseSchema, error)
 }
 
 func New(baseClient base.Client) Client {
@@ -31,7 +34,13 @@ const (
 	SELL             // 2
 )
 
-func (clt *clientImpl) PositionsGet(product Product, side Side) ([]byte, error) {
+type ResponseSchema struct {
+	Symbol     string  `json:"Symbol"`
+	SymbolName string  `json:"SymbolName"`
+	LeavesQty  float64 `json:"LeavesQty"`
+}
+
+func (clt *clientImpl) PositionsGet(product Product, side Side) (ResponseSchema, error) {
 	sideStr := "undef"
 	if side == BUY {
 		sideStr = "1"
@@ -47,11 +56,13 @@ func (clt *clientImpl) PositionsGet(product Product, side Side) ([]byte, error) 
 	case OPTION:
 		productStr = "4"
 	}
-	return clt.baseClient.Get("/positions", map[string]string{"product": productStr, "side": sideStr})
-}
-
-type ResponseSchema struct {
-	Symbol     string  `json:"Symbol"`
-	SymbolName string  `json:"SymbolName"`
-	LeavesQty  float64 `json:"LeavesQty"`
+	respBytes, err := clt.baseClient.Get("/positions", map[string]string{"product": productStr, "side": sideStr})
+	if err != nil {
+		return ResponseSchema{}, err
+	}
+	decoded := ResponseSchema{}
+	if err := json.Unmarshal(respBytes, &decoded); err != nil {
+		return ResponseSchema{}, fmt.Errorf("failed to unmarshal JSON: %w", err)
+	}
+	return decoded, nil
 }
