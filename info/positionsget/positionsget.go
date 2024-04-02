@@ -31,7 +31,7 @@ type Side int
 
 const (
 	SELL Side = iota // 1
-	BUY
+	BUY              // 2
 )
 
 type ResponseSchema []Position
@@ -44,9 +44,9 @@ type Position struct {
 
 func (clt *clientImpl) PositionsGet(product Product, side Side) (ResponseSchema, error) {
 	sideStr := "undef"
-	if side == BUY {
+	if side == SELL {
 		sideStr = "1"
-	} else if side == SELL {
+	} else if side == BUY {
 		sideStr = "2"
 	}
 	productStr := "undef"
