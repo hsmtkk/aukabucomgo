@@ -22,3 +22,7 @@ func (clt *clientImpl) BoardGet(symbol string) ([]byte, error) {
 	path := fmt.Sprintf("/board/%s", symbol)
 	return clt.baseClient.Get(path, nil)
 }
+
+type ResponseSchema struct {
+	Delta float64 `json:"Delta"`
+}

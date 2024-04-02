@@ -49,3 +49,9 @@ func (clt *clientImpl) PositionsGet(product Product, side Side) ([]byte, error) 
 	}
 	return clt.baseClient.Get("/positions", map[string]string{"product": productStr, "side": sideStr})
 }
+
+type ResponseSchema struct {
+	Symbol     string  `json:"Symbol"`
+	SymbolName string  `json:"SymbolName"`
+	LeavesQty  float64 `json:"LeavesQty"`
+}
