@@ -30,8 +30,8 @@ const (
 type Side int
 
 const (
-	BUY  Side = iota // 1
-	SELL             // 2
+	SELL Side = iota // 1
+	BUY
 )
 
 type ResponseSchema []Position
