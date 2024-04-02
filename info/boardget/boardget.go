@@ -59,5 +59,8 @@ func (clt *clientImpl) BoardGet(symbol string, marketCode MarketCode) (ResponseS
 }
 
 type ResponseSchema struct {
-	Delta float64 `json:"Delta"`
+	SymbolName string  `json:"SymbolName"`
+	BidPrice   float64 `json:"BidPrice"`
+	AskPrice   float64 `json:"AskPrice"`
+	Delta      float64 `json:"Delta"`
 }
