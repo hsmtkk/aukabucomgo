@@ -34,7 +34,9 @@ const (
 	SELL             // 2
 )
 
-type ResponseSchema struct {
+type ResponseSchema []Position
+
+type Position struct {
 	Symbol     string  `json:"Symbol"`
 	SymbolName string  `json:"SymbolName"`
 	LeavesQty  float64 `json:"LeavesQty"`
