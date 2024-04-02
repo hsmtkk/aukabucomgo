@@ -4,12 +4,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+	"time"
 
 	"github.com/hsmtkk/aukabucomgo/base"
 )
 
 type Client interface {
-	SymbolNameOptionGet(optionCode OptionCode, derivMonth int, putOrCall PutOrCall, strikePrice int) (ResponseSchema, error)
+	SymbolNameOptionGet(optionCode OptionCode, year, month int, putOrCall PutOrCall, strikePrice int) (ResponseSchema, error)
 }
 
 func New(baseClient base.Client) Client {
@@ -39,18 +40,20 @@ type ResponseSchema struct {
 	SymbolName string `json:"SymbolName"`
 }
 
-func (clt *clientImpl) SymbolNameOptionGet(optionCode OptionCode, derivMonth int, putOrCall PutOrCall, strikePrice int) (ResponseSchema, error) {
+func (clt *clientImpl) SymbolNameOptionGet(optionCode OptionCode, year, month int, putOrCall PutOrCall, strikePrice int) (ResponseSchema, error) {
 	optionCodeMap := map[OptionCode]string{
 		NK225op:     "NK225op",
 		NK225miniop: "NK225miniop",
 	}
 	optionCodeStr := optionCodeMap[optionCode]
+	yearMonth := time.Date(year, time.Month(month), 1, 0, 0, 0, 0, nil)
+	derivMonth := yearMonth.Format("200601")
 	putOrCallMap := map[PutOrCall]string{
 		PUT:  "P",
 		CALL: "C",
 	}
 	putOrCallStr := putOrCallMap[putOrCall]
-	respBytes, err := clt.baseClient.Get("/symbolname/option", map[string]string{"OptionCode": optionCodeStr, "DerivMonth": strconv.Itoa(derivMonth), "PutOrCall": putOrCallStr, "StrikePrice": strconv.Itoa(strikePrice)})
+	respBytes, err := clt.baseClient.Get("/symbolname/option", map[string]string{"OptionCode": optionCodeStr, "DerivMonth": derivMonth, "PutOrCall": putOrCallStr, "StrikePrice": strconv.Itoa(strikePrice)})
 	if err != nil {
 		return ResponseSchema{}, err
 	}
