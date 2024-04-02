@@ -7,9 +7,6 @@ import (
 	"io"
 	"net/http"
 	"net/url"
-	"os"
-
-	"github.com/spf13/viper"
 )
 
 const CONTENT_TYPE = "Content-Type"
@@ -26,35 +23,40 @@ type clientImpl struct {
 	token string
 }
 
-func New() (Client, error) {
-	if viper.GetBool("test") {
-		return newTest()
+type Environment int
+
+const (
+	PRODUCTION Environment = iota
+	TEST
+)
+
+func New(env Environment, apiPassword string) (Client, error) {
+	if env == PRODUCTION {
+		return newProduction(apiPassword)
+	} else if env == TEST {
+		return newTest(apiPassword)
 	} else {
-		return newProduction()
+		return nil, fmt.Errorf("unknown environment: %v", env)
 	}
 }
 
-func newTest() (Client, error) {
+func newTest(apiPassword string) (Client, error) {
 	clt := &clientImpl{port: TEST_PORT}
-	if err := clt.auth(); err != nil {
+	if err := clt.auth(apiPassword); err != nil {
 		return nil, err
 	}
 	return clt, nil
 }
 
-func newProduction() (Client, error) {
+func newProduction(apiPassword string) (Client, error) {
 	clt := &clientImpl{port: PRODUCTION_PORT}
-	if err := clt.auth(); err != nil {
+	if err := clt.auth(apiPassword); err != nil {
 		return nil, err
 	}
 	return clt, nil
 }
 
-func (clt *clientImpl) auth() error {
-	apiPassword := os.Getenv("API_PASSWORD")
-	if apiPassword == "" {
-		return fmt.Errorf("env var API_PASSWORD is not defined")
-	}
+func (clt *clientImpl) auth(apiPassword string) error {
 	url, err := clt.makeURL("/token")
 	if err != nil {
 		return err
