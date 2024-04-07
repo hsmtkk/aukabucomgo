@@ -22,7 +22,9 @@ type clientImpl struct {
 type FutureCode int
 
 const (
-	NK225micro FutureCode = iota
+	NK225 FutureCode = iota
+	NK225mini
+	NK225micro
 )
 
 type ResponseSchema struct {
@@ -32,6 +34,8 @@ type ResponseSchema struct {
 
 func (clt *clientImpl) SymbolNameFutureGet(futureCode FutureCode, year, month int) (ResponseSchema, error) {
 	futureCodeMap := map[FutureCode]string{
+		NK225:      "NK225",
+		NK225mini:  "NK225mini",
 		NK225micro: "NK225micro",
 	}
 	futureCodeStr := futureCodeMap[futureCode]
