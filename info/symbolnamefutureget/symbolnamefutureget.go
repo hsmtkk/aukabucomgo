@@ -9,6 +9,7 @@ import (
 
 type Client interface {
 	SymbolNameFutureGet(futureCode FutureCode, year, month int) (ResponseSchema, error)
+	SymbolNameFutureGetNearest(futureCode FutureCode) (ResponseSchema, error)
 }
 
 func New(baseClient base.Client) Client {
@@ -33,14 +34,22 @@ type ResponseSchema struct {
 }
 
 func (clt *clientImpl) SymbolNameFutureGet(futureCode FutureCode, year, month int) (ResponseSchema, error) {
+	yearMonth := time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.Local)
+	derivMonth := yearMonth.Format("200601")
+	return clt.get(futureCode, derivMonth)
+}
+
+func (clt *clientImpl) SymbolNameFutureGetNearest(futureCode FutureCode) (ResponseSchema, error) {
+	return clt.get(futureCode, "0")
+}
+
+func (clt *clientImpl) get(futureCode FutureCode, derivMonth string) (ResponseSchema, error) {
 	futureCodeMap := map[FutureCode]string{
 		NK225:      "NK225",
 		NK225mini:  "NK225mini",
 		NK225micro: "NK225micro",
 	}
 	futureCodeStr := futureCodeMap[futureCode]
-	yearMonth := time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.Local)
-	derivMonth := yearMonth.Format("200601")
 	respBytes, err := clt.baseClient.Get("/symbolname/future", map[string]string{"FutureCode": futureCodeStr, "DerivMonth": derivMonth})
 	if err != nil {
 		return ResponseSchema{}, err
