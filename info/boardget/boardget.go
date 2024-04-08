@@ -64,4 +64,5 @@ type ResponseSchema struct {
 	BidPrice     float64 `json:"BidPrice"`
 	AskPrice     float64 `json:"AskPrice"`
 	Delta        float64 `json:"Delta"`
+	CalcPrice    float64 `json:"CalcPrice"`
 }
