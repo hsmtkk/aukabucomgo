@@ -7,11 +7,13 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"time"
 )
 
 const CONTENT_TYPE = "Content-Type"
 const APPLICATION_JSON = "application/json"
 const X_API_KEY = "X-API-KEY"
+const SLEEP_BEFORE_HTTP = 1 // to avoid too many requests error
 
 type Client interface {
 	Get(path string, params map[string]string) ([]byte, error)
@@ -116,6 +118,7 @@ func (clt *clientImpl) doHTTP(req *http.Request) ([]byte, error) {
 }
 
 func (clt *clientImpl) Get(path string, params map[string]string) ([]byte, error) {
+	time.Sleep(SLEEP_BEFORE_HTTP * time.Second)
 	url, err := clt.makeURL(path)
 	if err != nil {
 		return nil, err
@@ -134,6 +137,7 @@ func (clt *clientImpl) Get(path string, params map[string]string) ([]byte, error
 }
 
 func (clt *clientImpl) Post(path string, params map[string]string) ([]byte, error) {
+	time.Sleep(SLEEP_BEFORE_HTTP * time.Second)
 	url, err := clt.makeURL(path)
 	if err != nil {
 		return nil, err
